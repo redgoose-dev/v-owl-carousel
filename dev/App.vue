@@ -9,7 +9,17 @@
 
     <h2>Demo</h2>
     <div class="demo">
-      <Carousel :items="1">
+      <nav>
+        <button @click="onClickPrev">go to prev</button>
+        <button @click="onClickNext">go to next</button>
+      </nav>
+      <hr>
+      <Carousel
+        :items="1"
+        @init="onInitCarousel"
+        @translated="onTranslated"
+        @change="onChange"
+        @changed="onChanged">
         <div>
           <img src="https://images.unsplash.com/photo-1559863345-02eae058c2c2?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2550&q=80" alt="">
         </div>
@@ -34,6 +44,32 @@ export default {
   components: {
     Carousel,
   },
+  created() {
+    return {
+      $carousel: null
+    };
+  },
+  methods: {
+    onInitCarousel(event, $carousel) {
+      this.$carousel = $carousel;
+      console.warn(`on init: `, this.$carousel);
+    },
+    onChange(e) {
+      console.warn('on change: ', e.namespace, e.item, e.page);
+    },
+    onChanged(e) {
+      console.warn('on changed: ', e.namespace, e.item, e.page);
+    },
+    onTranslated(e) {
+      console.warn('on translated: ', e.namespace, e.item, e.page);
+    },
+    onClickPrev() {
+      this.$carousel.trigger('prev.owl.carousel')
+    },
+    onClickNext() {
+      this.$carousel.trigger('next.owl.carousel')
+    },
+  }
 }
 </script>
 

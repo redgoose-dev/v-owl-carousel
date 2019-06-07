@@ -1,15 +1,7 @@
 <template>
-  <div class="v-owl-carousel">
-    <span :id="prevHandler">
-      <slot name="prev"/>
-    </span>
-    <div :id="elementHandle" ref="body" :class="['owl-carousel', 'owl-theme']">
-      <slot/>
-    </div>
-    <span :id="nextHandler">
-      <slot name="next"/>
-    </span>
-  </div>
+<div class="v-owl-carousel" ref="body" :class="['owl-carousel', 'owl-theme']">
+  <slot/>
+</div>
 </template>
 
 <script>
@@ -19,13 +11,6 @@ import 'owl.carousel';
 
 export default {
   name: 'v-owl-carousel',
-  data: function(){
-    return {
-      prevHandler: 'carousel_prev_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-      elementHandle: 'carousel_' +  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-      nextHandler: 'carousel_next_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-    }
-  },
   props: {
     items : { default: 3 },
     margin : { default: 0 },
@@ -48,8 +33,7 @@ export default {
     responsive: { default() { return {} } },
   },
   mounted() {
-    // TODO: 선택자를 `ref`로 변경예정
-    const owl = $(`#${this.elementHandle}`).owlCarousel({
+    const owl = $(this.$refs.body).owlCarousel({
       items: this.items,
       margin: this.margin,
       loop: this.loop,
@@ -68,16 +52,15 @@ export default {
       dots: this.dots,
       autoplayTimeout: this.autoplayTimeout,
       autoplayHoverPause: this.autoplayHoverPause,
-      responsive: this.responsive
+      responsive: this.responsive,
+      onInitialized: (carousel) => { this.$emit('init', carousel, $(carousel.currentTarget)); },
+      onResize: (carousel) => { this.$emit('resize', carousel, $(carousel.currentTarget)); },
+      onResized: (carousel) => { this.$emit('resized', carousel, $(carousel.currentTarget)); },
+      onChange: (carousel) => { this.$emit('change', carousel, $(carousel.currentTarget)); },
+      onChanged: (carousel) => { this.$emit('changed', carousel, $(carousel.currentTarget)); },
+      onTranslate: (carousel) => { this.$emit('translate', carousel, $(carousel.currentTarget)); },
+      onTranslated: (carousel) => { this.$emit('translated', carousel, $(carousel.currentTarget)); },
     });
-
-    $(`#${this.prevHandler}`).on('click', function() {
-      owl.trigger('prev.owl.carousel');
-    });
-
-    $(`#${this.nextHandler}`).on('click', function() {
-      owl.trigger('next.owl.carousel');
-    });
-  }
+  },
 }
 </script>
